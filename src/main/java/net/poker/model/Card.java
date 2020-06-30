@@ -23,8 +23,9 @@ public class Card {
     }
 
     public static String[] allCardsAsArray() {
-        String[] values = new String[Rank.values().length * Suit.values().length];
-        int i = 0;
+        String[] values = new String[Rank.values().length * Suit.values().length + 1];
+        int i = 1;
+        values[0] = "";
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
                 values[i++] = rank.name()+" of "+suit.name();
