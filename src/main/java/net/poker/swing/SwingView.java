@@ -1,6 +1,7 @@
 package net.poker.swing;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class SwingView implements Runnable {
@@ -59,6 +60,15 @@ public class SwingView implements Runnable {
         constraints.gridy = 0;
         constraints.gridheight = 11;
         main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+
+        constraints.gridx = 2;
+        OutcomeTable outcomeTable = new OutcomeTable();
+        TableModel tableModel = outcomeTable.getOutcomeTableModel();
+        JTable table = new JTable(tableModel);
+        table.setFillsViewportHeight(true);
+        table.setCellSelectionEnabled(false);
+        table.setShowGrid(true);
+        main.add(table, constraints);
 
         main.pack();
         main.setVisible(true);
