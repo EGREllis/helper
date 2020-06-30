@@ -21,4 +21,15 @@ public class Card {
         }
         return cards;
     }
+
+    public static String[] allCardsAsArray() {
+        String[] values = new String[Rank.values().length * Suit.values().length];
+        int i = 0;
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                values[i++] = rank.name()+" of "+suit.name();
+            }
+        }
+        return values;
+    }
 }

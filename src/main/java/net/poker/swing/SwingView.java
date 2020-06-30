@@ -1,5 +1,7 @@
 package net.poker.swing;
 
+import net.poker.model.Card;
+
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
@@ -11,20 +13,22 @@ public class SwingView implements Runnable {
         main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         main.setLayout(new GridBagLayout());
 
+        String[] cards = Card.allCardsAsArray();
+
         JLabel label1 = new JLabel("Hand:");
-        JComboBox hand1 = new JComboBox();
-        JComboBox hand2 = new JComboBox();
+        JComboBox hand1 = new JComboBox(cards);
+        JComboBox hand2 = new JComboBox(cards);
 
         JLabel label2 = new JLabel("Flop:");
-        JComboBox card1 = new JComboBox();
-        JComboBox card2 = new JComboBox();
-        JComboBox card3 = new JComboBox();
+        JComboBox card1 = new JComboBox(cards);
+        JComboBox card2 = new JComboBox(cards);
+        JComboBox card3 = new JComboBox(cards);
 
         JLabel label3 = new JLabel("Turn:");
-        JComboBox card4 = new JComboBox();
+        JComboBox card4 = new JComboBox(cards);
 
         JLabel label4 = new JLabel("River:");
-        JComboBox card5 = new JComboBox();
+        JComboBox card5 = new JComboBox(cards);
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -65,6 +69,8 @@ public class SwingView implements Runnable {
         OutcomeTable outcomeTable = new OutcomeTable();
         TableModel tableModel = outcomeTable.getOutcomeTableModel();
         JTable table = new JTable(tableModel);
+        table.setShowHorizontalLines(true);
+        table.setShowVerticalLines(true);
         table.setFillsViewportHeight(true);
         table.setCellSelectionEnabled(false);
         table.setShowGrid(true);
