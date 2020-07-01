@@ -5,8 +5,18 @@ import net.poker.model.Card;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class SwingView implements Runnable {
+    private final ImageIcon[] imageIcons;
+
+    public SwingView() {
+        imageIcons = new ImageIcon[1];
+        imageIcons[0] = new ImageIcon(ClassLoader.getSystemResource("cards/cards.png"));
+
+        System.out.flush();
+    }
+
     @Override
     public void run() {
         JFrame main = new JFrame("Poker helper");
@@ -76,7 +86,22 @@ public class SwingView implements Runnable {
         table.setShowGrid(true);
         main.add(table, constraints);
 
+        constraints.gridx = 3;
+        main.add(new JLabel(imageIcons[0]), constraints);
+        //main.add(new JLabel(resize(imageIcons[0], 43, 66)), constraints);
+
         main.pack();
         main.setVisible(true);
+    }
+
+    private ImageIcon resize(ImageIcon icon, int width, int height) {
+        BufferedImage resizedImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = resizedImg.createGraphics();
+
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics.drawImage(icon.getImage(), 0, 0, width, height, null);
+        graphics.dispose();
+
+        return new ImageIcon(resizedImg);
     }
 }
