@@ -1,81 +1,102 @@
 package net.poker.swing;
 
-import net.poker.model.Card;
+import net.poker.io.CardReader;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 public class SwingView implements Runnable {
-    private final ImageIcon[] imageIcons;
+    private final CardSelector cardSelector;
 
     public SwingView() {
-        imageIcons = new ImageIcon[1];
-        imageIcons[0] = new ImageIcon(ClassLoader.getSystemResource("cards/cards.png"));
-
-        System.out.flush();
+        cardSelector = new CardSelector();
     }
 
-    @Override
-    public void run() {
+    public void createAndShowGUI() {
         JFrame main = new JFrame("Poker helper");
         main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         main.setLayout(new GridBagLayout());
 
-        String[] cards = Card.allCardsAsArray();
+        CardReader reader = new CardReader();
+        List<ImageIcon> cardImages = reader.loadCards();
 
+        MouseListener cardSelectListener = new CardSelectorListener();
         JLabel label1 = new JLabel("Hand:");
-        JComboBox hand1 = new JComboBox(cards);
-        JComboBox hand2 = new JComboBox(cards);
+
+        JLabel hand1 = new JLabel(cardImages.get(0));
+        hand1.addMouseListener(cardSelectListener);
+        JLabel hand2 = new JLabel(cardImages.get(0));
+        hand2.addMouseListener(cardSelectListener);
 
         JLabel label2 = new JLabel("Flop:");
-        JComboBox card1 = new JComboBox(cards);
-        JComboBox card2 = new JComboBox(cards);
-        JComboBox card3 = new JComboBox(cards);
+        JLabel card1 = new JLabel(cardImages.get(0));
+        card1.addMouseListener(cardSelectListener);
+        JLabel card2 = new JLabel(cardImages.get(0));
+        card2.addMouseListener(cardSelectListener);
+        JLabel card3 = new JLabel(cardImages.get(0));
+        card3.addMouseListener(cardSelectListener);
 
         JLabel label3 = new JLabel("Turn:");
-        JComboBox card4 = new JComboBox(cards);
+        JLabel card4 = new JLabel(cardImages.get(0));
+        card4.addMouseListener(cardSelectListener);
 
         JLabel label4 = new JLabel("River:");
-        JComboBox card5 = new JComboBox(cards);
+        JLabel card5 = new JLabel(cardImages.get(0));
+        card5.addMouseListener(cardSelectListener);
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.fill = GridBagConstraints.BOTH;
 
+        constraints.gridwidth = 2;
         main.add(label1, constraints);
+        constraints.gridwidth = 1;
         constraints.gridy = 1;
         main.add(hand1, constraints);
-        constraints.gridy = 2;
+        constraints.gridx = 1;
         main.add(hand2, constraints);
 
-        constraints.gridy = 3;
+        constraints.gridwidth = 3;
+        constraints.gridx = 2;
+        constraints.gridy = 0;
         main.add(label2, constraints);
-        constraints.gridy = 4;
+        constraints.gridwidth = 1;
+        constraints.gridx = 2;
+        constraints.gridy = 1;
         main.add(card1, constraints);
-        constraints.gridy = 5;
+        constraints.gridx = 3;
         main.add(card2, constraints);
-        constraints.gridy = 6;
+        constraints.gridx = 4;
         main.add(card3, constraints);
 
-        constraints.gridy = 7;
+        constraints.gridy = 0;
+        constraints.gridx = 5;
         main.add(label3, constraints);
-        constraints.gridy = 8;
+        constraints.gridy = 1;
+        constraints.gridx = 5;
         main.add(card4, constraints);
 
-        constraints.gridy = 9;
+        constraints.gridx = 6;
+        constraints.gridy = 0;
         main.add(label4, constraints);
-        constraints.gridy = 10;
+        constraints.gridx = 6;
+        constraints.gridy = 1;
         main.add(card5, constraints);
 
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        constraints.gridheight = 11;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.gridwidth = 7;
+        main.add(new JSeparator(SwingConstants.HORIZONTAL), constraints);
 
-        constraints.gridx = 2;
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.gridwidth = 7;
         OutcomeTable outcomeTable = new OutcomeTable();
         TableModel tableModel = outcomeTable.getOutcomeTableModel();
         JTable table = new JTable(tableModel);
@@ -84,24 +105,61 @@ public class SwingView implements Runnable {
         table.setFillsViewportHeight(true);
         table.setCellSelectionEnabled(false);
         table.setShowGrid(true);
-        main.add(table, constraints);
+        JScrollPane scrollPane = new JScrollPane(table);
+        main.add(scrollPane, constraints);
 
-        constraints.gridx = 3;
-        main.add(new JLabel(imageIcons[0]), constraints);
-        //main.add(new JLabel(resize(imageIcons[0], 43, 66)), constraints);
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        constraints.gridwidth = 1;
+        main.add(new JLabel(cardImages.get(0)), constraints);
+
+        constraints.gridx = 1;
+        main.add(new JLabel(cardImages.get(1)), constraints);
+
+        constraints.gridx = 2;
+        main.add(new JLabel(cardImages.get(2)), constraints);
 
         main.pack();
         main.setVisible(true);
     }
 
-    private ImageIcon resize(ImageIcon icon, int width, int height) {
-        BufferedImage resizedImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = resizedImg.createGraphics();
+    @Override
+    public void run() {
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    createAndShowGUI();
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+            System.err.flush();
+        }
+    }
 
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        graphics.drawImage(icon.getImage(), 0, 0, width, height, null);
-        graphics.dispose();
+    private class CardSelectorListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            System.out.println(String.format("Image clicked: (%1$d, %2$d)", e.getX(), e.getY()));
+            SwingView.this.cardSelector.selectCard();
+        }
 
-        return new ImageIcon(resizedImg);
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
     }
 }
