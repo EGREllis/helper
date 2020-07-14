@@ -114,10 +114,39 @@ public class SwingView implements Runnable {
         main.add(new JLabel(cardImages.get(0)), constraints);
 
         constraints.gridx = 1;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 2;
         main.add(new JLabel(cardImages.get(1)), constraints);
 
-        constraints.gridx = 2;
+        constraints.gridx = 3;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 4;
         main.add(new JLabel(cardImages.get(2)), constraints);
+
+        constraints.gridx = 5;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 6;
+        main.add(new JLabel(cardImages.get(3)), constraints);
+
+        constraints.gridx = 7;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 8;
+        main.add(new JLabel(cardImages.get(4)), constraints);
+
+        constraints.gridx = 9;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 10;
+        main.add(new JLabel(cardImages.get(5)), constraints);
+
+        constraints.gridx = 11;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 12;
+        main.add(new JLabel(cardImages.get(6)), constraints);
+
+        constraints.gridx = 13;
+        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
+        constraints.gridx = 14;
+        main.add(new JLabel(cardImages.get(52)), constraints);
 
         main.pack();
         main.setVisible(true);

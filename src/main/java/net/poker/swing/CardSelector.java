@@ -81,6 +81,7 @@ public class CardSelector {
             Suit suit = Suit.getSuitFromOrdinal(suitOrdinal);
             Card card = new Card(rank, suit);
             CardSelector.this.listener.cardSelected(card);
+            CardSelector.this.conceal();
         }
 
         @Override
