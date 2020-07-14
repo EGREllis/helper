@@ -12,26 +12,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class CardSelector {
-    private final Frame frame;
+    private final JFrame frame;
     private final CardSelectorCanvas canvas;
     private CardListener listener;
 
     public CardSelector() {
-        this.frame = new Frame();
+        this.frame = new JFrame();
         frame.setLayout(new BorderLayout());
         this.canvas = new CardSelectorCanvas();
         frame.add(canvas, BorderLayout.CENTER);
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(1,2));
-        JButton proceed = new JButton("Select");
-        proceed.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.cardSelected(new Card(Rank.ACE, Suit.CLUBS));
-                conceal();
-            }
-        });
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
             @Override
@@ -39,11 +32,11 @@ public class CardSelector {
                 conceal();
             }
         });
-        buttonPanel.add(proceed);
         buttonPanel.add(cancel);
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.setVisible(false);
         frame.pack();
+        setCardListener(new CardSelectedTerminalListener());
     }
 
     public void setCardListener(CardListener cardListener) {
@@ -71,6 +64,7 @@ public class CardSelector {
             super();
             image = new ImageIcon(ClassLoader.getSystemResource("cards/cards.png")).getImage();
             this.addMouseListener(new CardSelectorMouseListener());
+            this.setBounds(new Rectangle(0, 0, 950, 392));
         }
 
         public void paint(Graphics g) {
@@ -81,8 +75,12 @@ public class CardSelector {
     private class CardSelectorMouseListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {
-            System.out.println(String.format("Click at: (%1$d,%2$d) %3$s", e.getX(), e.getY(), e.paramString()));
-            System.out.flush();
+            int rankOrdinal = (int)Math.floor(1.0 * e.getX() / (CardSelector.this.canvas.getWidth() / 13));
+            int suitOrdinal = (int)Math.floor(1.0 * e.getY() / (CardSelector.this.canvas.getHeight() / 4));
+            Rank rank = Rank.getRankFromOrdinal(rankOrdinal);
+            Suit suit = Suit.getSuitFromOrdinal(suitOrdinal);
+            Card card = new Card(rank, suit);
+            CardSelector.this.listener.cardSelected(card);
         }
 
         @Override
@@ -104,5 +102,13 @@ public class CardSelector {
 
     public interface CardListener {
         void cardSelected(Card card);
+    }
+
+    public static class CardSelectedTerminalListener implements CardListener {
+        @Override
+        public void cardSelected(Card card) {
+            System.out.println(String.format("Card selected: %1$s", card));
+            System.out.flush();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package net.poker.model;
 
 public enum Rank {
+    ACE,
     TWO,
     THREE,
     FOUR,
@@ -12,6 +13,16 @@ public enum Rank {
     TEN,
     JACK,
     QUEEN,
-    KING,
-    ACE;
+    KING;
+
+    public static Rank getRankFromOrdinal(int ordinal) {
+        Rank rank = null;
+        for (Rank r :  Rank.values()) {
+            if (ordinal == r.ordinal()) {
+                rank = r;
+                break;
+            }
+        }
+        return rank;
+    }
 }
