@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Card {
+    public static final Card BLANK = new Card(null, null);
     public final Rank rank;
     public final Suit suit;
 
     public Card(final Rank rank, final Suit suit) {
-        if (rank == null || suit == null) {
-            throw new IllegalStateException(toString());
-        }
         this.rank = rank;
         this.suit = suit;
     }
@@ -18,7 +16,11 @@ public class Card {
     @Override
     public boolean equals(Object obj) {
         boolean result = false;
-        if (obj instanceof Card) {
+        if (this == BLANK && obj == BLANK) {
+            result = true;
+        } else if ((this == BLANK && obj != BLANK) || (this != BLANK) && (obj == BLANK)) {
+            result = false;
+        } else if (obj instanceof Card) {
             Card other = (Card)obj;
             result = rank.equals(other.rank) && suit.equals(other.suit);
         }
@@ -36,7 +38,8 @@ public class Card {
     }
 
     public static List<Card> allCards() {
-        List<Card> cards = new ArrayList<>(Rank.values().length * Suit.values().length);
+        List<Card> cards = new ArrayList<>(Rank.values().length * Suit.values().length + 1);
+        cards.add(Card.BLANK);
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
                 cards.add(new Card(rank, suit));

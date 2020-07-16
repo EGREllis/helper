@@ -1,6 +1,6 @@
 package net.poker.swing;
 
-import net.poker.io.CardReader;
+import net.poker.model.Card;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -8,13 +8,24 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.util.Map;
 
 public class SwingView implements Runnable {
-    private final CardSelector cardSelector;
+    private final Map<Card, ImageIcon> cardImages;
 
-    public SwingView() {
-        cardSelector = new CardSelector();
+    public SwingView(Map<Card, ImageIcon> cardImages) {
+        this.cardImages = cardImages;
+    }
+
+    private JLabel newCardLabel() {
+        JLabel cardLabel = new JLabel(cardImages.get(Card.BLANK));
+        CardSelector cardSelector = new CardSelector();
+
+        MouseListener mouseListener = new CardSelectorListener(cardSelector);
+        cardLabel.addMouseListener(mouseListener);
+        cardSelector.setCardListener(new CardSelectedListener(cardLabel, cardImages));
+
+        return cardLabel;
     }
 
     public void createAndShowGUI() {
@@ -22,32 +33,20 @@ public class SwingView implements Runnable {
         main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         main.setLayout(new GridBagLayout());
 
-        CardReader reader = new CardReader();
-        List<ImageIcon> cardImages = reader.loadCards();
-
-        MouseListener cardSelectListener = new CardSelectorListener();
         JLabel label1 = new JLabel("Hand:");
-
-        JLabel hand1 = new JLabel(cardImages.get(0));
-        hand1.addMouseListener(cardSelectListener);
-        JLabel hand2 = new JLabel(cardImages.get(0));
-        hand2.addMouseListener(cardSelectListener);
+        JLabel hand1 = newCardLabel();
+        JLabel hand2 = newCardLabel();
 
         JLabel label2 = new JLabel("Flop:");
-        JLabel card1 = new JLabel(cardImages.get(0));
-        card1.addMouseListener(cardSelectListener);
-        JLabel card2 = new JLabel(cardImages.get(0));
-        card2.addMouseListener(cardSelectListener);
-        JLabel card3 = new JLabel(cardImages.get(0));
-        card3.addMouseListener(cardSelectListener);
+        JLabel card1 = newCardLabel();
+        JLabel card2 = newCardLabel();
+        JLabel card3 = newCardLabel();
 
         JLabel label3 = new JLabel("Turn:");
-        JLabel card4 = new JLabel(cardImages.get(0));
-        card4.addMouseListener(cardSelectListener);
+        JLabel card4 = newCardLabel();
 
         JLabel label4 = new JLabel("River:");
-        JLabel card5 = new JLabel(cardImages.get(0));
-        card5.addMouseListener(cardSelectListener);
+        JLabel card5 = newCardLabel();
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -108,46 +107,6 @@ public class SwingView implements Runnable {
         JScrollPane scrollPane = new JScrollPane(table);
         main.add(scrollPane, constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 5;
-        constraints.gridwidth = 1;
-        main.add(new JLabel(cardImages.get(0)), constraints);
-
-        constraints.gridx = 1;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 2;
-        main.add(new JLabel(cardImages.get(1)), constraints);
-
-        constraints.gridx = 3;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 4;
-        main.add(new JLabel(cardImages.get(2)), constraints);
-
-        constraints.gridx = 5;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 6;
-        main.add(new JLabel(cardImages.get(3)), constraints);
-
-        constraints.gridx = 7;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 8;
-        main.add(new JLabel(cardImages.get(4)), constraints);
-
-        constraints.gridx = 9;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 10;
-        main.add(new JLabel(cardImages.get(5)), constraints);
-
-        constraints.gridx = 11;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 12;
-        main.add(new JLabel(cardImages.get(6)), constraints);
-
-        constraints.gridx = 13;
-        main.add(new JSeparator(SwingConstants.VERTICAL), constraints);
-        constraints.gridx = 14;
-        main.add(new JLabel(cardImages.get(52)), constraints);
-
         main.pack();
         main.setVisible(true);
     }
@@ -169,10 +128,16 @@ public class SwingView implements Runnable {
     }
 
     private class CardSelectorListener implements MouseListener {
+        private final CardSelector cardSelector;
+
+        public CardSelectorListener(CardSelector cardSelector) {
+            this.cardSelector = cardSelector;
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             System.out.println(String.format("Image clicked: (%1$d, %2$d)", e.getX(), e.getY()));
-            SwingView.this.cardSelector.selectCard();
+            cardSelector.selectCard();
         }
 
         @Override
@@ -189,6 +154,23 @@ public class SwingView implements Runnable {
 
         @Override
         public void mouseExited(MouseEvent e) {
+        }
+    }
+
+    private static class CardSelectedListener implements CardSelector.CardListener {
+        private final JLabel label;
+        private final Map<Card,ImageIcon> cardMap;
+
+        public CardSelectedListener(JLabel label, Map<Card,ImageIcon> cardMap) {
+            this.label = label;
+            this.cardMap = cardMap;
+        }
+
+        @Override
+        public void cardSelected(Card card) {
+            ImageIcon cardIcon = cardMap.get(card);
+            label.setIcon(cardIcon);
+            System.out.println(String.format("Updated card %1$s", card));
         }
     }
 }
