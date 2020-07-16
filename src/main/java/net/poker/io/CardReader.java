@@ -21,12 +21,11 @@ public class CardReader {
         Map<Card, ImageIcon> cards = new HashMap<>();
         BufferedImage blankCard = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = blankCard.createGraphics();
-        graphics.setColor(new Color(255,255,255, 0));
-        graphics.draw3DRect(0, 0, cardWidth, cardHeight, false);
-        graphics.setColor(new Color(0,0,0,0));
-        graphics.drawString("?",10, 10);
-        graphics.setColor(new Color(255, 0,0,0));
-        graphics.drawRect(8, 8, 68, 92);
+        graphics.setColor(new Color(0,0,0, 255));
+        graphics.draw3DRect(1, 1, cardWidth-2, cardHeight-2, false);
+        graphics.setColor(new Color(0,0,0,255));
+        graphics.setFont(new Font("Arial", Font.PLAIN, 24));
+        graphics.drawString("?",30, 50);
         graphics.dispose();
         blankCard.flush();
         cards.put(Card.BLANK, new ImageIcon(blankCard));
@@ -42,8 +41,7 @@ public class CardReader {
                 int originY = cardStartY + (cardHeight * j);
                 int originWidth = originX + cardWidth;
                 int originHeight = originY + cardHeight;
-
-                System.out.println(String.format("Copying card %1$d from (%2$d,%3$d) (%4$d,%5$d) to (%6$d,%7$d)", i + 13*j, originX, originY, originWidth, originHeight, cardWidth, cardHeight));
+                
                 graph2D.drawImage(allCards, 0, 0, cardWidth, cardHeight, originX, originY, originWidth, originHeight, null);
                 graph2D.dispose();
 
