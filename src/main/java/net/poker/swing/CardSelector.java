@@ -36,7 +36,6 @@ public class CardSelector {
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.setVisible(false);
         frame.pack();
-        setCardListener(new CardSelectedTerminalListener());
     }
 
     public void setCardListener(CardListener cardListener) {
@@ -103,13 +102,5 @@ public class CardSelector {
 
     public interface CardListener {
         void cardSelected(Card card);
-    }
-
-    public static class CardSelectedTerminalListener implements CardListener {
-        @Override
-        public void cardSelected(Card card) {
-            System.out.println(String.format("Card selected: %1$s", card));
-            System.out.flush();
-        }
     }
 }

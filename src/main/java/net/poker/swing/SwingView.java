@@ -170,7 +170,6 @@ public class SwingView implements Runnable {
         public void cardSelected(Card card) {
             ImageIcon cardIcon = cardMap.get(card);
             label.setIcon(cardIcon);
-            System.out.println(String.format("Updated card %1$s", card));
         }
     }
 }
