@@ -41,7 +41,7 @@ public class CardReader {
                 int originY = cardStartY + (cardHeight * j);
                 int originWidth = originX + cardWidth;
                 int originHeight = originY + cardHeight;
-                
+
                 graph2D.drawImage(allCards, 0, 0, cardWidth, cardHeight, originX, originY, originWidth, originHeight, null);
                 graph2D.dispose();
 

@@ -1,7 +1,10 @@
 package net.poker.swing;
 
+import net.poker.controller.CardStateController;
+import net.poker.controller.CardStateControllerImpl;
 import net.poker.io.CardReader;
 import net.poker.model.Card;
+import net.poker.model.CardState;
 
 import javax.swing.*;
 import java.util.Map;
@@ -16,7 +19,9 @@ public class Main
     {
         CardReader reader = new CardReader();
         Map<Card, ImageIcon> cardImages = reader.loadCards();
-        SwingView view = new SwingView(cardImages);
+        CardState cardState = CardState.newBlankState();
+        CardStateController controller = new CardStateControllerImpl(cardState);
+        SwingView view = new SwingView(cardImages, controller);
         view.run();
     }
 }
